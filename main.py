@@ -1,6 +1,7 @@
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from flask import Flask, request, jsonify
-from imagenes import url
+import pymongo
+from scraper.corgis.corgis.pipelines import CorgisPipeline
 
 
 
@@ -14,9 +15,14 @@ name = 'KAOS'
 elements = ['alberto', 'silvia','gonzalo']
 titulo_producto = ['manzana', 'pera', 'piña']
 
+images_interactor = CorgisPipeline()
+imagenes = images_interactor.get_all_items()
+urls = [imagen.get('imagenes') for imagen in imagenes]
+print(urls)
+
 template = env.get_template('index.html')
 producto = env.get_template('producto.html')
-my_html = template.render(title=title, name='KAOS', elements=elements, urls=url)
+my_html = template.render(title=title, name='KAOS', elements=elements, urls=urls[0])
 plantilla_producto = producto.render(title=title, name='KAOS', elements=elements, titulo_producto=titulo_producto)
 
 
