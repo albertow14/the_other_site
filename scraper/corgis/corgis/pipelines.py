@@ -19,8 +19,8 @@ class CorgisPipeline(object):
 
 
     def process_item(self, item, spider):
-        self.collection.insert(dict(item))
-        return item
-
+        for title in item['titulo']:
+            self.collection.insert_one({'titulo':title})
+        
     def get_all_items(self):
         return self.collection.find()

@@ -1,17 +1,23 @@
-# -*- coding: utf-8 -*-
 import scrapy
 from corgis.items import CorgisItem
 
 
-class CorgirulesSpider(scrapy.Spider):
+# queremos extraer todos los precios y titulos de los vinos con sus paginaciones
+# Normalmente el parse nos sirve para definir el proceso de extraccion de las urls
+
+
+
+
+class VinosCorteInglesSpider(scrapy.Spider):
     name = 'corgirules'
-    allowed_domains = ['gettyimages.es']
-    start_urls = ['https://www.gettyimages.es/fotos/pembroke-welsh-corgi?sort=best&mediatype=photography&phrase=pembroke%20welsh%20corgi']
+    allowed_domains = ['https://www.elcorteingles.es/']
+    start_urls = ['https://www.elcorteingles.es/club-del-gourmet/vinos/espana/']
 
     def parse(self, response):
         mlitems = CorgisItem()
 
-        mlitems['imagenes'] = response.xpath('//figure[@class="gallery-mosaic-asset__figure"]//@src').extract()
+        mlitems['titulo'] = response.xpath('//h3[@class="info-name"]/a[1]/@title').extract()
+        mlitems['precio'] = response.xpath('//div[@class="product-price "]/span/text()').extract()
         
         yield mlitems
         

@@ -17,24 +17,41 @@ titulo_producto = ['manzana', 'pera', 'piña']
 
 images_interactor = CorgisPipeline()
 imagenes = images_interactor.get_all_items()
-urls = [imagen.get('imagenes') for imagen in imagenes]
-print(urls)
+#urls = [imagen.get('imagenes') for imagen in imagenes]
+#print(urls)
+productos = [imagen.get('titulo') for imagen in imagenes]
+
+
+
 
 template = env.get_template('index.html')
 producto = env.get_template('producto.html')
-my_html = template.render(title=title, name='KAOS', elements=elements, urls=urls[0])
-plantilla_producto = producto.render(title=title, name='KAOS', elements=elements, titulo_producto=titulo_producto)
+#my_html = template.render(title=title, name='KAOS', elements=elements, urls=urls[0])
+plantilla_producto = producto.render(title=title, name='KAOS', elements=elements, productos=productos[0])
 
 
 
 
 app = Flask(__name__)
 
-@app.route('/users', methods=['GET'])
+def search_for_titles(collection, search_text):
+    collection.create_index([('titulo','text')])
+    return collection.find({"$text": {"$search": search_text}}).limit(3)
+
+@app.route('/users', methods=['GET', 'POST'])
 def hello_world():
 
     if request.method == 'GET':
-        return my_html
+        return plantilla_producto
+    if request.method == 'POST':
+        data = request.json
+        word_to_search = data.get('word')
+        search = search_for_titles(images_interactor.collection, word_to_search)
+        result = list()
+        for x in search:
+            result.append(x['titulo']) 
+        
+        return str(result)
 
 @app.route('/blog/<titulo_producto>')
 def hello(titulo_producto):

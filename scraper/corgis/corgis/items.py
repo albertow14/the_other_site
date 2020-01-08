@@ -9,5 +9,6 @@ import scrapy
 
 
 class CorgisItem(scrapy.Item):
-    imagenes = scrapy.Field()
+    titulo = scrapy.Field()
+    precio = scrapy.Field()
     pass
