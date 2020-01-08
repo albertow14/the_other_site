@@ -28,7 +28,7 @@ template = env.get_template('index.html')
 producto = env.get_template('producto.html')
 #my_html = template.render(title=title, name='KAOS', elements=elements, urls=urls[0])
 plantilla_producto = producto.render(title=title, name='KAOS', elements=elements, productos=productos[0])
-
+render_template = env.get_template
 
 
 
@@ -38,8 +38,14 @@ def search_for_titles(collection, search_text):
     collection.create_index([('titulo','text')])
     return collection.find({"$text": {"$search": search_text}}).limit(3)
 
-@app.route('/users', methods=['GET', 'POST'])
-def hello_world():
+
+@app.route('/')
+def vinos():
+    return plantilla_producto
+
+
+@app.route('/results', methods=['GET', 'POST'])
+def result():
 
     if request.method == 'GET':
         return plantilla_producto
@@ -50,8 +56,8 @@ def hello_world():
         result = list()
         for x in search:
             result.append(x['titulo']) 
-        
-        return str(result)
+        resultado = env.get_template("results.html")
+        return resultado.render(result = result)
 
 @app.route('/blog/<titulo_producto>')
 def hello(titulo_producto):
